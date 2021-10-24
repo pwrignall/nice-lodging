@@ -105,7 +105,6 @@
       $.ajax({
         type: "GET",
         //YOUR TURN: Replace with csv export link
-        //url: 'https://docs.google.com/spreadsheets/d/1MiqwGe_7m6B0xFQfaS3GGRO8CmGm5xlXPICDPEeGHyo/gviz/tq?tqx=out:csv&sheet=Sheet1',
         url: 'https://docs.google.com/spreadsheets/d/1lb2b3MBOxGq7A5exhHAe0zXqy1oR130cO5Hw96NLJTE/gviz/tq?tqx=out:csv&sheet=lodging',
         dataType: "text",
         success: function (csvData) { makeGeoJSON(csvData); }
@@ -147,6 +146,7 @@
               var description = `<h3>` + e.features[0].properties.Name + `</h3>` 
               + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` 
               + `<h4>` + `<b>` + `Price: ` + `</b>` + e.features[0].properties.Price + `</h4>`
+              + `<h4>` + `<b>` + `Price pp: ` + `</b>` + e.features[0].properties.PPP + `</h4>`
               + `<h4>` + `<b>` + `PPPPN: ` + `</b>` + e.features[0].properties.PPPPN + `</h4>`
               + `<h4>` + `<b>` + `Beds: ` + `</b>` + e.features[0].properties.Beds + `</h4>`
               + `<h4>` + `<b>` + `Bathrooms: ` + `</b>` + e.features[0].properties.Bathrooms + `</h4>`
