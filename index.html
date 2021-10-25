@@ -61,6 +61,17 @@
       font-weight: 400;
     }
 
+    .mapboxgl-popup-content p {
+      margin: 0;
+      display: block;
+      padding: 10px 3px 10px 10px;
+    }
+
+    .mapboxgl-popup-content img {
+      max-width: 450px;
+      display: block;
+    }
+
     .mapboxgl-container {
       cursor: pointer;
     }
@@ -144,6 +155,7 @@
               //You can adjust the values of the popup to match the headers of your CSV.
               // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
               var description = `<h3>` + e.features[0].properties.Name + `</h3>` 
+              + `<img src="` + e.features[0].properties.Photo + `"/>`
               + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` 
               + `<h4>` + `<b>` + `Price: ` + `</b>` + e.features[0].properties.Price + `</h4>`
               + `<h4>` + `<b>` + `Price pp: ` + `</b>` + e.features[0].properties.PPP + `</h4>`
@@ -151,6 +163,7 @@
               + `<h4>` + `<b>` + `Beds: ` + `</b>` + e.features[0].properties.Beds + `</h4>`
               + `<h4>` + `<b>` + `Bathrooms: ` + `</b>` + e.features[0].properties.Bathrooms + `</h4>`
               + `<h4>` + `<b>` + `Other: ` + `</b>` + e.features[0].properties.Extras + `</h4>`
+              + `<p><a href="` + e.features[0].properties.Link + `" target="_blank">More info...</a></p>`
               ;
 
               // Ensure that if the map is zoomed out such that multiple
