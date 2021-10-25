@@ -102,11 +102,11 @@
       };
     };
     //YOUR TURN: add your Mapbox token
-    
+
     mapboxgl.accessToken = 'pk.eyJ1IjoicHdyaWduYWxsIiwiYSI6ImNrdjVwaTNwdTFtenkybm92ejhscmc4Z2gifQ.ShXF1Tfp00e2TKVtUdhhEw'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
-      style: 'mapbox://styles/mapbox/outdoors-v11', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+      style: 'mapbox://styles/mapbox/light-v10', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
       center: [7.25, 43.75], // starting position [lng, lat]
       zoom: 10,// starting zoom
       transformRequest: transformRequest
@@ -140,7 +140,7 @@
                 'data': data
               },
               'paint': {
-                'circle-radius': 5,
+                'circle-radius': 10,
                 'circle-color': "purple"
               }
             });
@@ -154,17 +154,17 @@
               //set popup text
               //You can adjust the values of the popup to match the headers of your CSV.
               // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `<h3>` + e.features[0].properties.Name + `</h3>` 
-              + `<img src="` + e.features[0].properties.Photo + `"/>`
-              + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` 
-              + `<h4>` + `<b>` + `Price: ` + `</b>` + e.features[0].properties.Price + `</h4>`
-              + `<h4>` + `<b>` + `Price pp: ` + `</b>` + e.features[0].properties.PPP + `</h4>`
-              + `<h4>` + `<b>` + `PPPPN: ` + `</b>` + e.features[0].properties.PPPPN + `</h4>`
-              + `<h4>` + `<b>` + `Beds: ` + `</b>` + e.features[0].properties.Beds + `</h4>`
-              + `<h4>` + `<b>` + `Bathrooms: ` + `</b>` + e.features[0].properties.Bathrooms + `</h4>`
-              + `<h4>` + `<b>` + `Other: ` + `</b>` + e.features[0].properties.Extras + `</h4>`
-              + `<p><a href="` + e.features[0].properties.Link + `" target="_blank">More info...</a></p>`
-              ;
+              var description = `<h3>` + e.features[0].properties.Name + `</h3>`
+                + `<img src="` + e.features[0].properties.Photo + `"/>`
+                + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>`
+                + `<h4>` + `<b>` + `Price: ` + `</b>` + e.features[0].properties.Price + `</h4>`
+                + `<h4>` + `<b>` + `Price pp: ` + `</b>` + e.features[0].properties.PPP + `</h4>`
+                + `<h4>` + `<b>` + `PPPPN: ` + `</b>` + e.features[0].properties.PPPPN + `</h4>`
+                + `<h4>` + `<b>` + `Beds: ` + `</b>` + e.features[0].properties.Beds + `</h4>`
+                + `<h4>` + `<b>` + `Bathrooms: ` + `</b>` + e.features[0].properties.Bathrooms + `</h4>`
+                + `<h4>` + `<b>` + `Other: ` + `</b>` + e.features[0].properties.Extras + `</h4>`
+                + `<p><a href="` + e.features[0].properties.Link + `" target="_blank">More info...</a></p>`
+                ;
 
               // Ensure that if the map is zoomed out such that multiple
               // copies of the feature are visible, the popup appears
@@ -193,6 +193,100 @@
 
             var bbox = turf.bbox(data);
             map.fitBounds(bbox, { padding: 50 });
+
+            map.addSource('cols', {
+              'type': 'geojson',
+              'data': 'https://raw.githubusercontent.com/pwrignall/nice-lodging/main/cols.geojson'
+            });
+            map.addLayer({
+              'id': 'cols',
+              'type': 'line',
+              'source': 'cols',
+              'layout': {
+                'line-join': 'round',
+                'line-cap': 'round'
+              },
+              'paint': {
+                'line-color': '#ffa02c',
+                'line-width': 6
+              }
+            });
+
+            map.addSource('collabs', {
+              'type': 'geojson',
+              'data': {
+                'type': 'FeatureCollection',
+                'features': [
+                  {
+                    'type': 'Feature',
+                    'geometry': {
+                      'type': 'Point',
+                      'coordinates': [
+                        7.315435409545899,
+                        43.722
+                      ]
+                    },
+                    'properties': {
+                      'title': 'Col d\'Eze: 9.7km @ 5%'
+                    }
+                  },
+                  {
+                    'type': 'Feature',
+                    'geometry': {
+                      'type': 'Point',
+                      'coordinates': [
+                        7.45821475982666,
+                        43.79597326576601
+                      ]
+                    },
+                    'properties': {
+                      'title': 'Col de la Madone (via Menton): 13.1km @ 7%'
+                    }
+                  },
+                  {
+                    'type': 'Feature',
+                    'geometry': {
+                      'type': 'Point',
+                      'coordinates': [
+                        7.369165420532227,
+                        43.85656387037451
+                      ]
+                    },
+                    'properties': {
+                      'title': 'Col de Braus: 9.6km @ 6%'
+                    }
+                  },
+                  {
+                    'type': 'Feature',
+                    'geometry': {
+                      'type': 'Point',
+                      'coordinates': [
+                        7.4192047119140625,
+                        43.73066976618957
+                      ]
+                    },
+                    'properties': {
+                      'title': 'Coastal road: 30km @ 0%'
+                    }
+                  }
+                ]
+              }
+            });
+
+            map.addLayer({
+              'id': 'collabs',
+              'type': 'symbol',
+              'source': 'collabs',
+              'layout': {
+                'text-field': ['get', 'title'],
+                'text-font': [
+                  'Open Sans Semibold',
+                  'Arial Unicode MS Bold'
+                ],
+                'text-offset': [0, 1.25],
+                'text-anchor': 'bottom'
+              }
+            });
 
           });
 
