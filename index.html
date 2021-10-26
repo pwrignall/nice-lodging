@@ -141,7 +141,13 @@
               },
               'paint': {
                 'circle-radius': 7,
-                'circle-color': "purple"
+                'circle-color': [
+                  'match',
+                  ['get', 'Chosen'],
+                  '1',
+                  'purple',
+                  'darkgray'
+                ]
               }
             });
 
@@ -187,7 +193,7 @@
             });
 
             // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'places', function () {
+            map.on('mouseleave', 'csvData', function () {
               map.getCanvas().style.cursor = '';
             });
 
@@ -287,6 +293,39 @@
                 'text-anchor': 'bottom'
               }
             });
+
+            map.addSource('chosen', {
+              'type': 'geojson',
+              'data': {
+                'type': 'Feature',
+                'geometry': {
+                  'type': 'Point',
+                  'coordinates': [
+                    7.315435409545899,
+                    43.722
+                  ]
+                },
+                'properties': {
+                  'title': 'Col d\'Eze: 9.7km @ 5%'
+                }
+              }
+            });
+
+            map.addLayer({
+              'id': 'chosen',
+              'type': 'symbol',
+              'source': 'collabs',
+              'layout': {
+                'text-field': ['get', 'title'],
+                'text-font': [
+                  'Open Sans Semibold',
+                  'Arial Unicode MS Bold'
+                ],
+                'text-offset': [0, 1.25],
+                'text-anchor': 'bottom'
+              }
+            });
+
 
           });
 
