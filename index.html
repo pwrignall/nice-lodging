@@ -102,7 +102,6 @@
       };
     };
     //YOUR TURN: add your Mapbox token
-
     mapboxgl.accessToken = 'pk.eyJ1IjoicHdyaWduYWxsIiwiYSI6ImNrdjVwaTNwdTFtenkybm92ejhscmc4Z2gifQ.ShXF1Tfp00e2TKVtUdhhEw'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
@@ -143,10 +142,10 @@
                 'circle-radius': 7,
                 'circle-color': [
                   'match',
-                  ['get', 'Chosen'],
+                  ['get', 'Shortlist'],
                   '1',
                   'purple',
-                  'darkgray'
+                  'darkgrey'
                 ]
               }
             });
@@ -214,7 +213,7 @@
               },
               'paint': {
                 'line-color': '#ffa02c',
-                'line-width': 6
+                'line-width': 4
               }
             });
 
