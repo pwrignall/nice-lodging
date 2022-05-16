@@ -115,7 +115,7 @@
       $.ajax({
         type: "GET",
         //YOUR TURN: Replace with csv export link
-        url: 'https://docs.google.com/spreadsheets/d/1lb2b3MBOxGq7A5exhHAe0zXqy1oR130cO5Hw96NLJTE/gviz/tq?tqx=out:csv&sheet=lodging',
+        url: 'https://docs.google.com/spreadsheets/d/1lb2b3MBOxGq7A5exhHAe0zXqy1oR130cO5Hw96NLJTE/gviz/tq?tqx=out:csv&sheet=hotspots',
         dataType: "text",
         success: function (csvData) { makeGeoJSON(csvData); }
       });
@@ -130,76 +130,12 @@
         }, function (err, data) {
           map.on('load', function () {
 
-            //Add the the layer to the map
-            map.addLayer({
-              'id': 'csvData',
-              'type': 'circle',
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'paint': {
-                'circle-radius': 7,
-                'circle-color': [
-                  'match',
-                  ['get', 'Shortlist'],
-                  '1',
-                  'purple',
-                  '-1',
-                  'pink',
-                  'darkgrey'
-                ]
-              }
-            });
 
-
-            // When a click event occurs on a feature in the csvData layer, open a popup at the
-            // location of the feature, with description HTML from its properties.
-            map.on('click', 'csvData', function (e) {
-              var coordinates = e.features[0].geometry.coordinates.slice();
-
-              //set popup text
-              //You can adjust the values of the popup to match the headers of your CSV.
-              // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `<h3>` + e.features[0].properties.Name + `</h3>`
-                + `<img src="` + e.features[0].properties.Photo + `"/>`
-                + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>`
-                + `<h4>` + `<b>` + `Price: ` + `</b>` + e.features[0].properties.Price + `</h4>`
-                + `<h4>` + `<b>` + `Price pp: ` + `</b>` + e.features[0].properties.PPP + `</h4>`
-                + `<h4>` + `<b>` + `PPPPN: ` + `</b>` + e.features[0].properties.PPPPN + `</h4>`
-                + `<h4>` + `<b>` + `Beds: ` + `</b>` + e.features[0].properties.Beds + `</h4>`
-                + `<h4>` + `<b>` + `Bathrooms: ` + `</b>` + e.features[0].properties.Bathrooms + `</h4>`
-                + `<h4>` + `<b>` + `Other: ` + `</b>` + e.features[0].properties.Extras + `</h4>`
-                + `<p><a href="` + e.features[0].properties.Link + `" target="_blank">More info...</a></p>`
-                ;
-
-              // Ensure that if the map is zoomed out such that multiple
-              // copies of the feature are visible, the popup appears
-              // over the copy being pointed to.
-              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-              }
-
-              //add Popup to map
-
-              new mapboxgl.Popup()
-                .setLngLat(coordinates)
-                .setHTML(description)
-                .addTo(map);
-            });
-
-            // Change the cursor to a pointer when the mouse is over the places layer.
-            map.on('mouseenter', 'csvData', function () {
-              map.getCanvas().style.cursor = 'pointer';
-            });
-
-            // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'csvData', function () {
-              map.getCanvas().style.cursor = '';
-            });
-
-            var bbox = turf.bbox(data);
-            map.fitBounds(bbox, { padding: 50 });
+            // var bbox = turf.bbox(data);
+            map.fitBounds([
+              [7.152228, 43.660471], // southwestern corner of the bounds
+              [7.518898, 43.938549] // northeastern corner of the bounds
+            ]);
 
             map.addSource('cols', {
               'type': 'geojson',
@@ -308,36 +244,115 @@
               }
             });
 
-            map.addSource('chosen', {
-              'type': 'geojson',
-              'data': {
-                'type': 'Feature',
-                'geometry': {
-                  'type': 'Point',
-                  'coordinates': [
-                    7.315435409545899,
-                    43.722
-                  ]
-                },
-                'properties': {
-                  'title': 'Col d\'Eze: 9.7km @ 5%'
-                }
+            map.loadImage(
+              'https://cdn.icon-icons.com/icons2/334/PNG/256/1_-_Home_256x256_35385.png',
+              (error, image) => {
+                if (error) throw error;
+
+                // Add the image to the map style.
+                map.addImage('house', image);
+
+                // Add a data source containing one point feature.
+                map.addSource('base', {
+                  'type': 'geojson',
+                  'data': {
+                    'type': 'FeatureCollection',
+                    'features': [
+                      {
+                        'type': 'Feature',
+                        'geometry': {
+                          'type': 'Point',
+                          'coordinates': [7.25858, 43.74158]
+                        },
+                        'properties': {
+                          'title': 'Base'
+                        }
+                      }
+                    ]
+                  }
+                });
+
+                map.addLayer({
+                  'id': 'base',
+                  'type': 'symbol',
+                  'source': 'base',
+                  'layout': {
+                    'icon-image': 'house',
+                    'icon-size': 0.1,
+                    'text-field': ['get', 'title'],
+                    'text-font': [
+                      'Open Sans Semibold',
+                      'Arial Unicode MS Bold'
+                    ],
+                    'text-offset': [0, 2],
+                    'text-anchor': 'bottom'
+                  }
+                });
+
+              });
+
+            //Add the the layer to the map
+            map.addLayer({
+              'id': 'csvData',
+              'type': 'circle',
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'paint': {
+                'circle-radius': 7,
+                'circle-color': [
+                  'match',
+                  ['get', 'Type'],
+                  'Café',
+                  'purple',
+                  'POI',
+                  'pink',
+                  'darkgrey'
+                ]
               }
             });
 
-            map.addLayer({
-              'id': 'chosen',
-              'type': 'symbol',
-              'source': 'collabs',
-              'layout': {
-                'text-field': ['get', 'title'],
-                'text-font': [
-                  'Open Sans Semibold',
-                  'Arial Unicode MS Bold'
-                ],
-                'text-offset': [0, 1.25],
-                'text-anchor': 'bottom'
+
+            // When a click event occurs on a feature in the csvData layer, open a popup at the
+            // location of the feature, with description HTML from its properties.
+            map.on('click', 'csvData', function (e) {
+              var coordinates = e.features[0].geometry.coordinates.slice();
+
+              //set popup text
+              //You can adjust the values of the popup to match the headers of your CSV.
+              // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+              var description = `<h3>` + e.features[0].properties.Name + `</h3>`
+                + `<img src="` + e.features[0].properties.Photo + `"/>`
+                + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>`
+                + `<h4>` + `<b>` + `Type: ` + `</b>` + e.features[0].properties.Type + `</h4>`
+                + `<h4>` + `<b>` + `Notes: ` + `</b>` + e.features[0].properties.Notes + `</h4>`
+                + `<p><a href="` + e.features[0].properties.Link + `" target="_blank">More info...</a></p>`
+                ;
+
+              // Ensure that if the map is zoomed out such that multiple
+              // copies of the feature are visible, the popup appears
+              // over the copy being pointed to.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
+
+              //add Popup to map
+
+              new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+            });
+
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'csvData', function () {
+              map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'csvData', function () {
+              map.getCanvas().style.cursor = '';
             });
 
 
